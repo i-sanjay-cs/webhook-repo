@@ -3,51 +3,88 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GitHub Events</title>
+    <title>Webhook Events</title>
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 20px;
+        table {
+            width: 100%;
+            border-collapse: collapse;
         }
-        h1 {
-            color: #333;
+
+        table, th, td {
+            border: 1px solid black;
         }
-        .event {
-            background-color: #f9f9f9;
-            border: 1px solid #ddd;
-            padding: 10px;
-            margin-bottom: 10px;
-            border-radius: 5px;
+
+        th, td {
+            padding: 8px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+
+        .loading {
+            font-size: 20px;
+            color: #555;
         }
     </style>
 </head>
 <body>
-
-    <h1>GitHub Events</h1>
-    <div id="event-list">
-        Loading events...
-    </div>
+    <h1>Webhook Events</h1>
+    <table>
+        <thead>
+            <tr>
+                <th>Author</th>
+                <th>Action</th>
+                <th>From Branch</th>
+                <th>To Branch</th>
+                <th>Timestamp</th>
+            </tr>
+        </thead>
+        <tbody id="events-table">
+        </tbody>
+    </table>
+    
+    <p id="loading" class="loading">Loading events...</p>
 
     <script>
-        function fetchEvents() {
-            fetch('/api/events')
-            .then(response => response.json())
-            .then(data => {
-                const eventList = document.getElementById('event-list');
-                eventList.innerHTML = ''; 
-                
-                data.forEach(event => {
-                    const eventDiv = document.createElement('div');
-                    eventDiv.className = 'event';
-                    eventDiv.innerHTML = `<strong>${event.author}</strong> ${event.action} from <strong>${event.from_branch}</strong> to <strong>${event.to_branch}</strong> on <em>${event.timestamp}</em>`;
-                    eventList.appendChild(eventDiv);
+        async function fetchEvents() {
+            try {
+                const response = await fetch('/api/events');
+                const events = await response.json();
+
+                const tableBody = document.getElementById('events-table');
+                tableBody.innerHTML = '';  
+
+                if (events.length === 0) {
+                    document.getElementById('loading').innerText = 'No events found.';
+                    return;
+                }
+
+                document.getElementById('loading').style.display = 'none';
+
+                events.forEach(event => {
+                    const row = document.createElement('tr');
+
+                    row.innerHTML = `
+                        <td>${event.author}</td>
+                        <td>${event.action}</td>
+                        <td>${event.from_branch}</td>
+                        <td>${event.to_branch}</td>
+                        <td>${event.timestamp}</td>
+                    `;
+
+                    tableBody.appendChild(row);
                 });
-            });
+            } catch (error) {
+                document.getElementById('loading').innerText = 'Error loading events.';
+                console.error('Error fetching events:', error);
+            }
         }
 
         setInterval(fetchEvents, 15000);
+
         fetchEvents();
     </script>
-
 </body>
 </html>
