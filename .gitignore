@@ -1,0 +1,17 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*.so
+
+# Virtual environment
+venv/
+.env
+
+# Database files
+*.db
+
+# Heroku files
+*.log
+
+# OS files
+.DS_Store
