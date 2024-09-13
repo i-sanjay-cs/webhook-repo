@@ -8,7 +8,8 @@ app = Flask(__name__)
 ## mongo Connection
 mongo_password = os.getenv("MONGO_PASSWORD")
 
-client = pymongo.MongoClient(f"mongodb+srv://toontown8268703019:{mongo_password}@web-hook.6y5og.mongodb.net/webhooks?retryWrites=true&w=majority", tls=True, tlsAllowInvalidCertificates=True)
+client = pymongo.MongoClient(f"mongodb+srv://toontown8268703019:{mongo_password}@web-hook.6y5og.mongodb.net/webhooks?retryWrites=true&w=majority&tls=true&tlsAllowInvalidCertificates=false", connectTimeoutMS=60000, socketTimeoutMS=60000)
+
 db = client["webhooks"]
 collection = db["events"]
 @app.route("/")
