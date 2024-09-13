@@ -5,32 +5,83 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Webhook Events</title>
     <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            margin: 0;
+            padding: 20px;
+            text-align: center;
+        }
+
+        h1 {
+            color: #333;
+        }
+
         table {
-            width: 100%;
+            width: 80%;
+            margin: 20px auto;
             border-collapse: collapse;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
         }
 
         table, th, td {
-            border: 1px solid black;
+            border: 1px solid #ddd;
         }
 
         th, td {
-            padding: 8px;
-            text-align: left;
+            padding: 12px 15px;
+            text-align: center;
         }
 
         th {
+            background-color: #4CAF50;
+            color: white;
+        }
+
+        td {
+            background-color: #fff;
+            color: #333;
+        }
+
+        tr:nth-child(even) {
             background-color: #f2f2f2;
         }
 
-        .loading {
-            font-size: 20px;
-            color: #555;
+        tr:hover {
+            background-color: #ddd;
         }
+
+        .loading {
+            font-size: 18px;
+            color: #555;
+            margin-top: 20px;
+        }
+
+        /* Badge Styles */
+        .badge {
+            padding: 5px 10px;
+            border-radius: 12px;
+            color: white;
+            font-size: 0.9em;
+        }
+
+        .badge-push {
+            background-color: #2196F3;
+        }
+
+        .badge-pull-request {
+            background-color: #FFC107;
+        }
+
+        .badge-merge {
+            background-color: #673AB7;
+        }
+
     </style>
 </head>
 <body>
     <h1>Webhook Events</h1>
+    
     <table>
         <thead>
             <tr>
@@ -44,7 +95,7 @@
         <tbody id="events-table">
         </tbody>
     </table>
-    
+
     <p id="loading" class="loading">Loading events...</p>
 
     <script>
@@ -66,9 +117,19 @@
                 events.forEach(event => {
                     const row = document.createElement('tr');
 
+                    // Determine badge color based on action type
+                    let actionBadge = '';
+                    if (event.action === 'push') {
+                        actionBadge = '<span class="badge badge-push">Push</span>';
+                    } else if (event.action === 'pull_request') {
+                        actionBadge = '<span class="badge badge-pull-request">Pull Request</span>';
+                    } else if (event.action === 'merge') {
+                        actionBadge = '<span class="badge badge-merge">Merge</span>';
+                    }
+
                     row.innerHTML = `
                         <td>${event.author}</td>
-                        <td>${event.action}</td>
+                        <td>${actionBadge}</td>
                         <td>${event.from_branch}</td>
                         <td>${event.to_branch}</td>
                         <td>${event.timestamp}</td>
