@@ -10,6 +10,26 @@ mongo_password = os.getenv("MONGO_PASSWORD")
 client = pymongo.MongoClient(f"mongodb+srv://toontown8268703019:{mongo_password}@web-hook.6y5og.mongodb.net/webhooks?retryWrites=true&w=majority")
 db = client["webhooks"]
 collection = db["events"]
+@app.route("/")
+def index():
+    return render_template('index.html')
+
+@app.route("/api/events", methods=["GET"])
+def get_events():
+    events = collection.find().sort("timestamp", -1).limit(10)
+    event_list = []
+    
+    for event in events:
+        event_list.append({
+            "author": event["author"],
+            "action": event["action"],
+            "from_branch": event.get("from_branch", "N/A"),
+            "to_branch": event["to_branch"],
+            "timestamp": event["timestamp"]
+        })
+    
+    return jsonify(event_list)
+
 
 @app.route("/webhook", methods=["POST"])
 def github_webhook():

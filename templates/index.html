@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GitHub Events</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        h1 {
+            color: #333;
+        }
+        .event {
+            background-color: #f9f9f9;
+            border: 1px solid #ddd;
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>GitHub Events</h1>
+    <div id="event-list">
+        Loading events...
+    </div>
+
+    <script>
+        function fetchEvents() {
+            fetch('/api/events')
+            .then(response => response.json())
+            .then(data => {
+                const eventList = document.getElementById('event-list');
+                eventList.innerHTML = ''; 
+                
+                data.forEach(event => {
+                    const eventDiv = document.createElement('div');
+                    eventDiv.className = 'event';
+                    eventDiv.innerHTML = `<strong>${event.author}</strong> ${event.action} from <strong>${event.from_branch}</strong> to <strong>${event.to_branch}</strong> on <em>${event.timestamp}</em>`;
+                    eventList.appendChild(eventDiv);
+                });
+            });
+        }
+
+        setInterval(fetchEvents, 15000);
+        fetchEvents();
+    </script>
+
+</body>
+</html>
